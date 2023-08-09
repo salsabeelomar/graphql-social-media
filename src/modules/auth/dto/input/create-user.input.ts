@@ -9,11 +9,10 @@ import {
   IsDate,
   IsNumber,
 } from 'class-validator';
-import { DateScalar } from 'src/graphql/scalar/date.scalar';
+import { DateScalar } from 'src/modules/graphql/scalar/date.scalar';
 
 @InputType()
 export class CreateUserInput {
-
   @Field(() => String, { nullable: false })
   @IsString()
   @IsNotEmpty()

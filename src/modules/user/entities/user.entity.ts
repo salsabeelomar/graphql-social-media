@@ -1,19 +1,19 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 
 @ObjectType()
-export class User {
-  @Field(() => Int, { nullable: false })
+export class UserEntity {
+  @Field(() => Int)
   id: number;
 
-  @Field(() => String, { nullable: false })
+  @Field(() => String)
   username: string;
 
-  @Field(() => String, { nullable: false })
+  @Field(() => String)
   email: string;
 
-  @Field(() => String, { nullable: false })
+  @Field(() => String)
   token: string;
 
-  @Field(() => Date, { nullable: false })
+  @Field(() => Date)
   birthday: Date;
 }

@@ -1,16 +1,28 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { UseInterceptors } from '@nestjs/common';
+import { Transaction } from 'sequelize';
+
 import { CommentService } from './comment.service';
 import { Comment } from './entities/comment.entity';
 import { CreateCommentInput } from './dto/create-comment.input';
 import { UpdateCommentInput } from './dto/update-comment.input';
+import { TransactionDeco } from 'src/common/decorator/transaction.decorator';
+import { TransactionInter } from 'src/common/interceptor/transaction.interceptor';
+import { UserType } from '../auth/dto';
+import { User } from 'src/common/decorator/user.decorator';
 
+@UseInterceptors(TransactionInter)
 @Resolver(() => Comment)
 export class CommentResolver {
   constructor(private readonly commentService: CommentService) {}
 
   @Mutation(() => Comment)
-  createComment(@Args('createCommentInput') createCommentInput: CreateCommentInput) {
-    return this.commentService.create(createCommentInput);
+  createComment(
+    @Args('commentInfo') createCommentInput: CreateCommentInput,
+    @User() user: UserType,
+    @TransactionDeco() trans: Transaction,
+  ) {
+    return this.commentService.create(createCommentInput, user, trans);
   }
 
   @Query(() => [Comment], { name: 'comment' })
@@ -18,14 +30,14 @@ export class CommentResolver {
     return this.commentService.findAll();
   }
 
-  @Query(() => Comment, { name: 'comment' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.commentService.findOne(id);
-  }
-
   @Mutation(() => Comment)
-  updateComment(@Args('updateCommentInput') updateCommentInput: UpdateCommentInput) {
-    return this.commentService.update(updateCommentInput.id, updateCommentInput);
+  updateComment(
+    @Args('updateCommentInput') updateCommentInput: UpdateCommentInput,
+  ) {
+    return this.commentService.update(
+      updateCommentInput.id,
+      updateCommentInput,
+    );
   }
 
   @Mutation(() => Comment)

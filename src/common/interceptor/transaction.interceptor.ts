@@ -36,7 +36,7 @@ export class TransactionInter implements NestInterceptor {
         transaction.commit();
       }),
       catchError((err) => {
-        this.logger.error('Query Rollback', 'in TransactionInter ');
+        this.logger.error('Query Rollback', 'in Transaction Interceptor ');
         transaction.rollback();
         throw new BadGatewayException(err);
       }),

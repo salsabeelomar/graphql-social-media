@@ -4,10 +4,9 @@ import {
   IsNumber,
   IsString,
   MaxLength,
-  MinLength,
 } from 'class-validator';
 
-export class TokenType {
+export class UserType {
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
@@ -19,7 +18,7 @@ export class TokenType {
 
   @IsNumber()
   @IsNotEmpty()
-  id: number
+  id: number;
 
   @IsNumber()
   @IsNotEmpty()

@@ -1,5 +1,5 @@
 import { LoginUserInput } from './input/login-user.input';
-import { TokenType } from './generateToken.dto';
+import { UserType } from '../../user/dto/user.dto';
 import { CreateUserInput } from './input/create-user.input';
 
-export { LoginUserInput, TokenType, CreateUserInput };
+export { LoginUserInput, UserType, CreateUserInput };

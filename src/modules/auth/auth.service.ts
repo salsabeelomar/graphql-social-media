@@ -5,7 +5,7 @@ import { Transaction } from 'sequelize';
 
 import { Providers } from 'src/common/constant';
 import { User } from 'src/modules/user/model/user.model';
-import { CreateUserInput, LoginUserInput, TokenType } from './dto';
+import { CreateUserInput, LoginUserInput, UserType } from './dto';
 import { UserService } from 'src/modules/user/user.service';
 import { CheckExisting } from 'src/common/utils/checkExisting';
 import { WinstonLogger } from 'src/common/logger/winston.logger';
@@ -18,7 +18,7 @@ export class AuthService {
     @Inject(UserService) private readonly userService: UserService,
     private readonly jwt: JwtService,
   ) {}
-  generateToken(user: TokenType) {
+  generateToken(user: UserType) {
     const payload = {
       sub: user.id,
       user: {
@@ -47,7 +47,7 @@ export class AuthService {
       { transaction },
     );
     this.Logger.log(`Create new User id = ${createdUser.id}`);
-    const newUser: TokenType = {
+    const newUser: UserType = {
       id: createdUser.id,
       email: createdUser.email,
       username: createdUser.username,
@@ -76,7 +76,7 @@ export class AuthService {
     );
     this.Logger.log(`Signed User id = ${getPass.id}`);
 
-    const newUser: TokenType = {
+    const newUser: UserType = {
       id: getPass.id,
       email: user.email,
       username: getEmail.username,

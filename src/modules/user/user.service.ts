@@ -31,7 +31,7 @@ export class UserService {
     CheckExisting(user, NotFoundException, 'User not Found');
 
     return {
-      user: user.id,
+      id: user.id,
       username: user.username,
       phoneNumber: user.phoneNumber,
       email: user.email,

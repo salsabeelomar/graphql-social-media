@@ -1,26 +1,155 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePostInput } from './dto/create-post.input';
-import { UpdatePostInput } from './dto/update-post.input';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+  NotFoundException,
+} from '@nestjs/common';
+import { Transaction } from 'sequelize';
+
+import * as util from 'util';
+
+import { CreatePostInput } from './dto/input/create-post.input';
+import { UpdatePostInput } from './dto/input/update-post.input';
+
+import { UserType } from '../auth/dto';
+import { Post } from './model/post.model';
+import { Providers, LIMIT } from 'src/common/constant';
+import { WinstonLogger } from 'src/common/logger/winston.logger';
+import { User } from '../user/model/user.model';
+import { Comment } from '../comment/model/comment.model';
+import { CheckExisting } from 'src/common/utils/checkExisting';
 
 @Injectable()
 export class PostService {
-  create(createPostInput: CreatePostInput) {
-    return 'This action adds a new post';
+  private readonly logger = new WinstonLogger();
+
+  constructor(
+    @Inject(Providers.POST_PROVIDER) private readonly postRepo: typeof Post,
+  ) {}
+  async create(
+    post: CreatePostInput,
+    user: UserType,
+    transaction: Transaction,
+  ) {
+    const newPost = await this.postRepo.create(
+      { ...post, userId: user.id },
+      { transaction },
+    );
+    this.logger.log(`Create New Post id =${newPost.id}`);
+
+    return {
+      content: newPost.content,
+      createdAt: newPost.createdAt,
+      ...user,
+    };
   }
 
-  findAll() {
-    return `This action returns all post`;
+  async pagination(page: number, transaction: Transaction) {
+    const offset = LIMIT * (page - 1);
+    const posts = await this.postRepo.findAll({
+      attributes: ['createdAt', 'content'],
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'username', 'email'],
+        },
+        {
+          model: Comment,
+          as: 'comments',
+          attributes: ['id', 'comment'],
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['id', 'username', 'email'],
+            },
+          ],
+        },
+      ],
+      offset,
+      limit: LIMIT,
+      order: [['createdAt', 'DESC']],
+      transaction,
+    });
+    this.logger.log(`Get Post All post In Page ${page}`);
+    
+    return [...posts];
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async findPostById(id: number, transaction: Transaction) {
+    const post = await this.postRepo.findByPk(id, {
+      transaction,
+    });
+    this.logger.log(`Get Post By Id ${id}`);
+    return post;
   }
 
-  update(id: number, updatePostInput: UpdatePostInput) {
-    return `This action updates a #${id} post`;
+  async update(
+    updatePost: UpdatePostInput,
+    user: UserType,
+    transaction: Transaction,
+  ) {
+    const CheckPost = await this.checkPostOwner(updatePost.id, user.id);
+    CheckExisting(CheckPost, NotFoundException, 'Not The Owner of Post');
+
+    const updatedUser = await this.postRepo.update(
+      {
+        content: updatePost.content,
+        updatedBy: user.id,
+      },
+      {
+        where: {
+          userId: user.id,
+          id: updatePost.id,
+        },
+        transaction,
+      },
+    );
+    CheckExisting(updatedUser[0], BadRequestException, 'Post not Updated');
+
+    this.logger.log(`Post With id =${updatePost.id} updated Successfully`);
+
+    return 'Post Updated Successfully';
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async remove(
+    post: UpdatePostInput,
+    user: UserType,
+    transaction: Transaction,
+  ) {
+    const CheckPost = await this.findPostById(post.id, transaction);
+
+    CheckExisting(CheckPost, UnauthorizedException, 'Post was Deleted already');
+    const deletedPost = await this.postRepo.update(
+      {
+        deletedAt: new Date(),
+        deletedBy: user.id,
+      },
+      {
+        where: {
+          id: post.id,
+          userId: user.id,
+        },
+        transaction,
+      },
+    );
+    CheckExisting(deletedPost[0], BadRequestException, 'Post not Deleted');
+
+    this.logger.warn(`Delete Post with id =${post.id} `);
+
+    return `Post Deleted Successfully `;
+  }
+  async checkPostOwner(postId: number, userId: number) {
+    const post = await this.postRepo.findOne({
+      attributes: ['content', 'userId'],
+      where: {
+        id: postId,
+        userId: userId,
+      },
+    });
+    this.logger.log(`Check the Post Owner `);
+    return post;
   }
 }

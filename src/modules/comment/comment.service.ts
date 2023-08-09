@@ -1,11 +1,38 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { CreateCommentInput } from './dto/create-comment.input';
 import { UpdateCommentInput } from './dto/update-comment.input';
+import { WinstonLogger } from 'src/common/logger/winston.logger';
+import { Providers } from 'src/common/constant';
+import { Comment } from './model/comment.model';
+
+import { Transaction } from 'sequelize';
+import { UserType } from '../auth/dto';
 
 @Injectable()
 export class CommentService {
-  create(createCommentInput: CreateCommentInput) {
-    return 'This action adds a new comment';
+  private readonly logger = new WinstonLogger();
+  constructor(
+    @Inject(Providers.COMMENT_PROVIDER)
+    private readonly commentRepo: typeof Comment,
+  ) {}
+
+  async create(
+    comment: CreateCommentInput,
+    user: UserType,
+    transaction: Transaction,
+  ) {
+    const newComment = await this.commentRepo.create({
+      userId: user.id,
+      ...comment,
+      transaction,
+    });
+
+    return {
+      comment: newComment.comment,
+      id: newComment.id,
+      userId:user.id,
+      username:user.username
+    };
   }
 
   findAll() {

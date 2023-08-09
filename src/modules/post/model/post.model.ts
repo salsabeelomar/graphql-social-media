@@ -51,5 +51,10 @@ import { User } from 'src/modules/user/model/user.model';
       type: DataType.INTEGER,
     })
     deleteBy: number;
+    // @ForeignKey(() => User)
+    // @Column({
+    //   type: DataType.INTEGER,
+    // })
+    // createdBy: number;
   }
   

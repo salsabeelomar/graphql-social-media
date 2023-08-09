@@ -12,9 +12,11 @@ import {
 
 import { UserService } from 'src/modules/user/user.service';
 import { CheckExisting } from '../utils/checkExisting';
+import { WinstonLogger } from '../logger/winston.logger';
 
 @Injectable()
 export class AuthGard implements CanActivate {
+  private readonly logger = new WinstonLogger();
   constructor(
     private readonly jwt: JwtService,
     @Inject(UserService) private readonly userService: UserService,
@@ -33,7 +35,8 @@ export class AuthGard implements CanActivate {
 
     try {
       const decoded = await this.jwt.verify(token);
-      const user = this.userService.findById(decoded.sub);
+      const user = await this.userService.findById(decoded.sub);
+      this.logger.log(`User Auth id = ${user.id}`);
       request.user = user;
     } catch (error) {
       if (error instanceof TokenExpiredError)
