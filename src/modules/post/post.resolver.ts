@@ -11,7 +11,6 @@ import { UserType } from '../auth/dto';
 import { TransactionInter } from 'src/common/interceptor/transaction.interceptor';
 import { TransactionDeco } from 'src/common/decorator/transaction.decorator';
 import { Public } from 'src/common/decorator/public.decorator';
-import { Pagination } from './entities/pagination.entity';
 
 @UseInterceptors(TransactionInter)
 @Resolver(() => Post)
@@ -28,20 +27,13 @@ export class PostResolver {
   }
 
   @Public()
-  @Query(() => [Pagination])
+  @Query(() => [Post])
   async pagination(
     @Args('page') page: number,
     @TransactionDeco() trans: Transaction,
   ) {
-    const data = await this.postService.pagination(page, trans);
-    // console.log([data]);
-    return [...data];
+    return this.postService.pagination(page, trans);
   }
-
-  // @Query(() => Post, { name: 'allPost' })
-  // findOne(@Args('id', { type: () => Int }) id: number) {
-  //   return this.postService.findOne(id);
-  // }
 
   @Mutation(() => String)
   updatePost(

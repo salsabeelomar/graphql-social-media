@@ -27,7 +27,7 @@ export class Comment extends Model {
   })
   userId: number;
 
-  @BelongsTo(() => User)
+  @BelongsTo(() => User, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   user: User;
 
   @ForeignKey(() => Post)
@@ -37,7 +37,7 @@ export class Comment extends Model {
   })
   postId: number;
 
-  @BelongsTo(() => Post)
+  @BelongsTo(() => Post, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   post: Post;
 
   @Column({

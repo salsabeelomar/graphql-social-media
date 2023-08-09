@@ -91,8 +91,8 @@ export class PostService {
     user: UserType,
     transaction: Transaction,
   ) {
-    const CheckPost = await this.checkPostOwner(updatePost.id, user.id);
-    CheckExisting(CheckPost, NotFoundException, 'Not The Owner of Post');
+    const checkPost = await this.checkPostOwner(updatePost.id, user.id);
+    CheckExisting(checkPost, NotFoundException, 'Not The Owner of Post');
 
     const updatedUser = await this.postRepo.update(
       {
@@ -119,9 +119,9 @@ export class PostService {
     user: UserType,
     transaction: Transaction,
   ) {
-    const CheckPost = await this.findPostById(post.id, transaction);
+    const checkPost = await this.findPostById(post.id, transaction);
 
-    CheckExisting(CheckPost, UnauthorizedException, 'Post was Deleted already');
+    CheckExisting(checkPost, UnauthorizedException, 'Post was Deleted already');
     const deletedPost = await this.postRepo.update(
       {
         deletedAt: new Date(),
@@ -149,7 +149,7 @@ export class PostService {
         userId: userId,
       },
     });
-    this.logger.log(`Check the Post Owner `);
+    this.logger.log(`Check the Post Owner`);
     return post;
   }
 }

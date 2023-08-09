@@ -1,11 +1,14 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { UseInterceptors } from '@nestjs/common';
 import { Transaction } from 'sequelize';
-
+import {
+  CreateCommentInput,
+  UpdateCommentInput,
+  CommentPagination,
+} from './dto/input/index.input';
 import { CommentService } from './comment.service';
 import { Comment } from './entities/comment.entity';
-import { CreateCommentInput } from './dto/create-comment.input';
-import { UpdateCommentInput } from './dto/update-comment.input';
+
 import { TransactionDeco } from 'src/common/decorator/transaction.decorator';
 import { TransactionInter } from 'src/common/interceptor/transaction.interceptor';
 import { UserType } from '../auth/dto';
@@ -25,23 +28,29 @@ export class CommentResolver {
     return this.commentService.create(createCommentInput, user, trans);
   }
 
-  @Query(() => [Comment], { name: 'comment' })
-  findAll() {
-    return this.commentService.findAll();
-  }
-
-  @Mutation(() => Comment)
-  updateComment(
-    @Args('updateCommentInput') updateCommentInput: UpdateCommentInput,
+  @Query(() => [Comment])
+  findComments(
+    @Args('pagination') pageInfo: CommentPagination,
+    @TransactionDeco() trans: Transaction,
   ) {
-    return this.commentService.update(
-      updateCommentInput.id,
-      updateCommentInput,
-    );
+    return this.commentService.pagination(pageInfo, trans);
   }
 
-  @Mutation(() => Comment)
-  removeComment(@Args('id', { type: () => Int }) id: number) {
-    return this.commentService.remove(id);
+  @Mutation(() => String)
+  updateComment(
+    @Args('updateComment') updateCommentInput: UpdateCommentInput,
+    @User() user: UserType,
+    @TransactionDeco() trans: Transaction,
+  ) {
+    return this.commentService.update(updateCommentInput, user, trans);
+  }
+
+  @Mutation(() => String)
+  removeComment(
+    @Args('comment') commentId: UpdateCommentInput,
+    @User() user: UserType,
+    @TransactionDeco() trans: Transaction,
+  ) {
+    return this.commentService.remove(commentId.id, user, trans);
   }
 }
