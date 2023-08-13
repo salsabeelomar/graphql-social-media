@@ -39,9 +39,6 @@ export class CreateUserInput {
   @Field(() => Date)
   @IsDate()
   @IsNotEmpty()
-  @Transform((value) => {
-    console.log(value);
-    return new Date(value.value as string);
-  })
+  @Transform((value) => new Date(value.value as string))
   birthday: DateScalar;
 }
