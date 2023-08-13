@@ -47,6 +47,7 @@ export class CommentService {
     );
     const newComment = await this.commentRepo.create({
       userId: user.id,
+      createdBy: user.id,
       ...comment,
       transaction,
     });
@@ -77,7 +78,6 @@ export class CommentService {
         postId: pageInfo.postId,
       },
     });
-    console.log(getComments);
     return getComments;
   }
 

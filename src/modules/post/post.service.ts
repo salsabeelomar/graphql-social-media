@@ -7,8 +7,6 @@ import {
 } from '@nestjs/common';
 import { Transaction } from 'sequelize';
 
-import * as util from 'util';
-
 import { CreatePostInput } from './dto/input/create-post.input';
 import { UpdatePostInput } from './dto/input/update-post.input';
 
@@ -33,7 +31,7 @@ export class PostService {
     transaction: Transaction,
   ) {
     const newPost = await this.postRepo.create(
-      { ...post, userId: user.id },
+      { ...post, userId: user.id, createdBy: user.id },
       { transaction },
     );
     this.logger.log(`Create New Post id =${newPost.id}`);
@@ -74,7 +72,7 @@ export class PostService {
       transaction,
     });
     this.logger.log(`Get Post All post In Page ${page}`);
-    
+
     return [...posts];
   }
 
@@ -98,6 +96,7 @@ export class PostService {
       {
         content: updatePost.content,
         updatedBy: user.id,
+        updatedAt: new Date(),
       },
       {
         where: {

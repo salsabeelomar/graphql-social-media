@@ -13,20 +13,20 @@ import { TransactionInter } from 'src/common/interceptor/transaction.interceptor
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
-  @Mutation(() => UserEntity, { name: 'signUp' })
+  @Mutation(() => UserEntity)
   @Public()
   signUp(
-    @Args('user') createUserInput: CreateUserInput,
+    @Args('newUser') createUserInput: CreateUserInput,
     @TransactionDeco() trans: Transaction,
   ) {
     return this.authService.signUp(createUserInput, trans);
   }
   @Public()
-  @Mutation(() => UserEntity, { name: 'signIn' })
+  @Mutation(() => UserEntity)
   signIn(
-    @Args('user') createUserInput: LoginUserInput,
+    @Args('user') loginUserInput: LoginUserInput,
     @TransactionDeco() trans: Transaction,
   ) {
-    return this.authService.signIn(createUserInput, trans);
+    return this.authService.signIn(loginUserInput, trans);
   }
 }

@@ -1,9 +1,9 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
+import { Field, ID, InputType, Int } from '@nestjs/graphql';
 
 @InputType()
 export class CommentPagination {
 
-  @Field(() => Int)
+  @Field(() => ID)
   postId: number;
 
   @Field(() => Int)

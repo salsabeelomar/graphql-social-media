@@ -36,9 +36,12 @@ export class CreateUserInput {
   @IsNotEmpty()
   phoneNumber: number;
 
-  @Field(() => String, { nullable: false })
+  @Field(() => Date)
   @IsDate()
   @IsNotEmpty()
-  @Transform((value) => new Date(value.value as string))
+  @Transform((value) => {
+    console.log(value);
+    return new Date(value.value as string);
+  })
   birthday: DateScalar;
 }

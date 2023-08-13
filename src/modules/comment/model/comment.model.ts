@@ -55,5 +55,16 @@ export class Comment extends Model {
   @Column({
     type: DataType.INTEGER,
   })
-  deleteBy: number;
+  deletedBy: number;
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.INTEGER,
+  })
+  updatedBy: number;
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.INTEGER,
+  })
+  createdBy: number;
 }

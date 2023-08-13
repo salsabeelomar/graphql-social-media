@@ -49,10 +49,17 @@ export class Post extends Model {
   @Column({
     type: DataType.INTEGER,
   })
-  deleteBy: number;
-  // @ForeignKey(() => User)
-  // @Column({
-  //   type: DataType.INTEGER,
-  // })
-  // createdBy: number;
+  deletedBy: number;
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.INTEGER,
+  })
+  updatedBy: number;
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.INTEGER,
+  })
+  createdBy: number;
 }

@@ -34,8 +34,7 @@ export class AuthService {
 
   async signUp(user: CreateUserInput, transaction: Transaction) {
     const getEmail = await this.userService.findByEmail(user.email);
-
-    CheckExisting(getEmail.username, BadRequestException, 'This Email exist ');
+    CheckExisting(!getEmail?.username, BadRequestException, 'This Email exist ');
 
     const hashedPass = bcrypt.hashSync(user.password, 10);
 
@@ -59,7 +58,7 @@ export class AuthService {
   async signIn(user: LoginUserInput, transaction: Transaction) {
     const getEmail = await this.userService.findByEmail(user.email);
     CheckExisting(
-      getEmail.username,
+      getEmail?.username,
       BadRequestException,
       'This Email not exist ',
     );

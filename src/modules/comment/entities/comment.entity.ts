@@ -1,15 +1,15 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
 import { UserEntity } from 'src/modules/user/entities/user.entity';
 
 @ObjectType()
 export class Comment {
-  @Field(() => Int)
+  @Field(() => ID)
   id: number;
 
   @Field(() => String)
   comment: string;
 
-  @Field(() => Int)
+  @Field(() => ID)
   postId: number;
 
   @Field(() => UserEntity)
