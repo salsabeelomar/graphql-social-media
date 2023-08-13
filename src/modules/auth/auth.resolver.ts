@@ -6,7 +6,7 @@ import { UserEntity } from 'src/modules/user/entities/user.entity';
 import { CreateUserInput, LoginUserInput } from './dto';
 import { Public } from 'src/common/decorator/public.decorator';
 import { TransactionDeco } from 'src/common/decorator/transaction.decorator';
-import { TransactionInter } from 'src/common/interceptor/transaction.interceptor';
+import { TransactionInter } from 'src/common/interceptor/Transaction.interceptor';
 
 @Resolver(() => UserEntity)
 @UseInterceptors(TransactionInter)

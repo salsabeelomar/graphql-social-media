@@ -8,7 +8,7 @@ import { CreatePostInput } from './dto/input/create-post.input';
 import { UpdatePostInput } from './dto/input/update-post.input';
 import { User } from 'src/common/decorator/user.decorator';
 import { UserType } from '../auth/dto';
-import { TransactionInter } from 'src/common/interceptor/transaction.interceptor';
+import { TransactionInter } from 'src/common/interceptor/Transaction.interceptor';
 import { TransactionDeco } from 'src/common/decorator/transaction.decorator';
 import { Public } from 'src/common/decorator/public.decorator';
 

@@ -10,7 +10,7 @@ import { CommentService } from './comment.service';
 import { Comment } from './entities/comment.entity';
 
 import { TransactionDeco } from 'src/common/decorator/transaction.decorator';
-import { TransactionInter } from 'src/common/interceptor/transaction.interceptor';
+import { TransactionInter } from 'src/common/interceptor/Transaction.interceptor';
 import { UserType } from '../auth/dto';
 import { User } from 'src/common/decorator/user.decorator';
 
